@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Client\AuthController;
 use \App\Http\Controllers\Api\Staff\AuthController as StaffAuthController;
 use App\Http\Controllers\Api\Client\ClientController;
+use App\Http\Controllers\Api\Staff\CourierController;
 use App\Http\Controllers\Api\Staff\StaffController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,18 @@ Route::middleware("auth:sanctum")->group(function () {
             StaffController::class,
             "getInformation"
         ]);
+
+        Route::middleware("can:courier")->group(function () {
+            Route::post("/v1/courier/online-toggle", [
+                CourierController::class,
+                "onlineToggle"
+            ]);
+
+            Route::get("/v1/courier/package/pickup/pending", [
+                CourierController::class,
+                "getPendingPickup"
+            ]);
+        });
     });
 });
 
