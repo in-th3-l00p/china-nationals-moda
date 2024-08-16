@@ -88,7 +88,9 @@ class ClientController extends Controller {
                 ]);
         $package->progress()->insert([
             "status" => "Pending pickup",
-            "package_id" => $package->id
+            "package_id" => $package->id,
+            "created_at" => now(),
+            "updated_at" => now(),
         ]);
         return response([
             "message" => "success",
@@ -141,25 +143,33 @@ class ClientController extends Controller {
                 $package->progress()->insert([
                     "status" => "Signed",
                     "returning" => 1,
-                    "package_id" => $package->id
+                    "package_id" => $package->id,
+                    "created_at" => now(),
+                    "updated_at" => now(),
                 ]);
             } else if ($package->status->status === "Picked up") {
                 $package->progress()->insert([
                     "status" => "Delivering",
                     "returning" => 1,
-                    "package_id" => $package->id
+                    "package_id" => $package->id,
+                    "created_at" => now(),
+                    "updated_at" => now(),
                 ]);
             } else if ($package->status->status === "Pending delivery") {
                 $package->progress()->insert([
                     "status" => "Pending transit",
                     "returning" => 1,
-                    "package_id" => $package->id
+                    "package_id" => $package->id,
+                    "created_at" => now(),
+                    "updated_at" => now(),
                 ]);
             } else if ($package->status->status === "Delivering") {
                 $package->progress()->insert([
                     "status" => "Picked up",
                     "returning" => 1,
-                    "package_id" => $package->id
+                    "package_id" => $package->id,
+                    "created_at" => now(),
+                    "updated_at" => now(),
                 ]);
             }
         }
