@@ -25,9 +25,9 @@ class CourierController extends Controller {
         $packages = $request
             ->user()
             ->pickupPackages()
-            ->with(["status" => function ($query) {
-                $query->where("status", "=", "Pending delivery");
-            }])
+            ->whereHas("status", function ($query) {
+                $query->where("status", "=", "Pending pickup");
+            })
             ->get();
         return [
             "message" => "success",
@@ -90,7 +90,7 @@ class CourierController extends Controller {
             ];
         foreach ($packages as $package)
             $package->progress()->insert([
-                "status" => "Picked up",
+                "status" => "Pending delivery",
                 "package_id" => $package->id,
                 "created_at" => now(),
                 "updated_at" => now()
@@ -103,7 +103,34 @@ class CourierController extends Controller {
         ];
     }
 
-    public function getPendingDeliveryPackages(Request $request) {
-
+    public function getPendingDelivery(Request $request) {
+        $packages = $request
+            ->user()
+            ->pickupPackages()
+            ->whereHas("status", function ($query) {
+                $query->where("status", "=", "Pending delivery");
+            })
+            ->get();
+        return [
+            "message" => "success",
+            "data" => $packages->map(fn ($package) => [
+                "id" => $package->id,
+                "tracking_number" => $package->tracking_number,
+                "from_campus" => "Campus " . $package->fromCampus->letter,
+                "from_address" => $package->from_address,
+                "to_campus" => "Campus " . $package->toCampus->letter,
+                "to_address" => $package->to_address,
+                "sender" => [
+                    "id" => $package->user->id,
+                    "firstname" => $package->user->first_name,
+                    "lastname" => $package->user->last_name,
+                    "phone_number" => $package->user->phone,
+                ],
+                "recipient" => [
+                    "name" => $package->recipient_name,
+                    "phone_number" => $package->recipient_phone_number,
+                ]
+            ])
+        ];
     }
 }

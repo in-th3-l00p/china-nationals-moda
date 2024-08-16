@@ -59,6 +59,12 @@ Route::middleware("auth:sanctum")->group(function () {
                 CourierController::class,
                 "carryPendingPickupPackages"
             ]);
+
+            Route::get("/v1/courier/package/delivery/pending", [
+                CourierController::class,
+                "getPendingDelivery"
+            ]);
+
         });
     });
 });
