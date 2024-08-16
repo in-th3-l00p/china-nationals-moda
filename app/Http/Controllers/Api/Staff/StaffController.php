@@ -94,7 +94,7 @@ class StaffController extends Controller
             return [
                 "message" => "over the courier's remaining capacity",
                 "data" => [
-                    "remaining_capacity"  => 1
+                    "remaining_capacity" => 5 - $pickedUpPackages
                 ]
             ];
         foreach ($packages as $package)
