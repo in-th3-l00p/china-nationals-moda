@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('containers', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->softDeletes();
+
             $table
                 ->foreignIdFor(User::class, "trucker_id")
                 ->constrained("users");

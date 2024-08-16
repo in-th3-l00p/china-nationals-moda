@@ -3,23 +3,25 @@
 namespace App\Http\Controllers\Api\Staff;
 
 use App\Http\Controllers\Controller;
+use App\Models\Container;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class StaffController extends Controller
 {
     public function getInformation(Request $request) {
-        $pickupPackagesCount = User::query()
-            ->where("id", "=", $request->user()->id)
-            ->withCount("pickupPackages")
-            ->get(["pickup_packages_count"])
-            ->pickup_packages_count;
-        $deliveredPackagesCount = User::query()
-            ->where("id", "=", $request->user()->id)
-            ->withCount("deliveryPackages")
-            ->get(["delivery_packages_count"])
-            ->delivery_packages_count;
-        if ($request->user()->type === "courier")
+        if ($request->user()->type === "courier") {
+            $pickupPackagesCount = User::query()
+                ->where("id", "=", $request->user()->id)
+                ->withCount("pickupPackages")
+                ->first(["pickup_packages_count"])
+                ->pickup_packages_count;
+            $deliveredPackagesCount = User::query()
+                ->where("id", "=", $request->user()->id)
+                ->withCount("deliveryPackages")
+                ->first(["delivery_packages_count"])
+                ->delivery_packages_count;
+
             return response([
                 "message" => "success",
                 "data" => [
@@ -35,6 +37,12 @@ class StaffController extends Controller
                     "online" => $request->user()->online
                 ]
             ]);
+        }
+
+        $pickupPackagesCount = $request->user()
+            ->containers()
+            ->withCount("packages")
+            ->sum("packages_count");
         return response([
             "message" => "success",
             "data" => [
@@ -44,6 +52,9 @@ class StaffController extends Controller
                 "email" => $request->user()->email,
                 "plate_number" => $request->user()->plate,
                 "current_campus" => $request->user()->campus->letter,
+                "remaining_capacity" => 15 - $pickupPackagesCount,
+                "total_unloaded" => Container::onlyTrashed()
+                    ->where("trucker_id", "=", $request->user()->id)
             ]
         ]);
     }

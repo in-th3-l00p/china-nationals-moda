@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Client\AuthController;
 use \App\Http\Controllers\Api\Staff\AuthController as StaffAuthController;
 use App\Http\Controllers\Api\Client\ClientController;
+use App\Http\Controllers\Api\Staff\StaffController;
 use Illuminate\Support\Facades\Route;
 
 Route::post("/v1/auth/signup", [AuthController::class, "signUp"]);
@@ -36,6 +37,11 @@ Route::middleware("auth:sanctum")->group(function () {
         );
     });
 
-
+    Route::middleware("can:staff")->group(function () {
+        Route::get("/v1/staff/information", [
+            StaffController::class,
+            "getInformation"
+        ]);
+    });
 });
 

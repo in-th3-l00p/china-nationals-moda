@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Campus;
 use App\Models\User;
+
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -42,15 +43,15 @@ class DatabaseSeeder extends Seeder
             "last_name" => "Smith",
             "phone" => "33178732",
             "type" => "user"
-       ]);
+        ]);
 
         User::factory()->create([
-            "email" =>  "courier@wsc.com",
-            "password" =>  Hash::make("courier"),
-            "first_name" =>  "Matthew",
-            "last_name" =>  "Green",
-            "phone" =>  "11890481",
-            "campus_id" =>  Campus::query()
+            "email" => "courier@wsc.com",
+            "password" => Hash::make("courier"),
+            "first_name" => "Matthew",
+            "last_name" => "Green",
+            "phone" => "11890481",
+            "campus_id" => Campus::query()
                 ->where("letter", "=", "A")
                 ->first()
                 ->id,
@@ -117,7 +118,7 @@ class DatabaseSeeder extends Seeder
             "type" => "courier"
         ]);
 
-        User::factory()->create([
+        $trucker = User::factory()->create([
             "email" => "trucker@wsc.com",
             "password" => Hash::make("trucker"),
             "first_name" => "Harper",
@@ -126,7 +127,11 @@ class DatabaseSeeder extends Seeder
             "route" => 1,
             "type" => "trucker"
         ]);
-        User::factory()->create([
+        $trucker->campus()->associate(Campus::query()
+            ->where("letter", "=", "A")
+            ->first())
+            ->save();
+        $trucker = User::factory()->create([
             "email" => "trucker1@wsc.com",
             "password" => Hash::make("trucker1"),
             "first_name" => "Samuel",
@@ -135,7 +140,11 @@ class DatabaseSeeder extends Seeder
             "route" => 1,
             "type" => "trucker"
         ]);
-        User::factory()->create([
+        $trucker->campus()->associate(Campus::query()
+            ->where("letter", "=", "A")
+            ->first())
+            ->save();
+        $trucker = User::factory()->create([
             "email" => "trucker2_1@wsc.com",
             "password" => Hash::make("trucker2"),
             "first_name" => "Grace",
@@ -144,7 +153,11 @@ class DatabaseSeeder extends Seeder
             "route" => 2,
             "type" => "trucker"
         ]);
-        User::factory()->create([
+        $trucker->campus()->associate(Campus::query()
+            ->where("letter", "=", "E")
+            ->first())
+            ->save();
+        $trucker = User::factory()->create([
             "email" => "trucker2_2@wsc.com",
             "password" => Hash::make("trucker3"),
             "first_name" => "Mia",
@@ -152,6 +165,10 @@ class DatabaseSeeder extends Seeder
             "plate" => "D10001",
             "route" => 2,
             "type" => "trucker"
-       ]);
+        ]);
+        $trucker->campus()->associate(Campus::query()
+            ->where("letter", "=", "D")
+            ->first())
+            ->save();
     }
 }

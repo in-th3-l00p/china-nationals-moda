@@ -38,7 +38,8 @@ return new class extends Migration
             /* courier */
             $table
                 ->boolean("online")
-                ->nullable();
+                ->nullable()
+                ->default(false);
 
             /* trucker */
             $table
