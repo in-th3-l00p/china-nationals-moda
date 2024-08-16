@@ -56,7 +56,7 @@ Route::middleware("auth:sanctum")->group(function () {
             ]);
 
             Route::post("/v1/courier/package/pickup/carry", [
-                StaffController::class,
+                CourierController::class,
                 "carryPendingPickupPackages"
             ]);
         });

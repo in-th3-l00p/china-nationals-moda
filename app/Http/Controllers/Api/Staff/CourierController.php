@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Staff;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CourierController extends Controller {
     public function onlineToggle(Request $request) {
@@ -49,5 +50,60 @@ class CourierController extends Controller {
                 ]
             ])
         ];
+    }
+
+    public function carryPendingPickupPackages(Request $request) {
+        $validator = Validator::make($request->all(), [
+            "package_id_list" => "required|array"
+        ]);
+        if ($validator->fails())
+            return response([
+                "message" => "data can not be processed"
+            ], 422);
+        $packages = collect([]);
+        foreach ($request->package_id_list as $id) {
+            $package = $request
+                ->user()
+                ->pickupPackages()
+                ->where("id", "=", $id)
+                ->whereHas("status", function ($query) {
+                    $query->where("status", "=", "Pending pickup");
+                })
+                ->first();
+            if ($package === null)
+                continue;
+            $packages->push($package);
+        }
+        $pickedUpPackages = $request
+            ->user()
+            ->pickupPackages()
+            ->whereHas("status", function ($query) {
+                $query->where("status", "!=", "Pending pickup");
+            })
+            ->count();
+        if ($packages->count() > 5 - $pickedUpPackages)
+            return [
+                "message" => "over the courier's remaining capacity",
+                "data" => [
+                    "remaining_capacity" => 5 - $pickedUpPackages
+                ]
+            ];
+        foreach ($packages as $package)
+            $package->progress()->insert([
+                "status" => "Picked up",
+                "package_id" => $package->id,
+                "created_at" => now(),
+                "updated_at" => now()
+            ]);
+        return [
+            "message" => "success",
+            "data" => [
+                "package_id_list" => $packages->map(fn ($package) => $package->id)
+            ]
+        ];
+    }
+
+    public function getPendingDeliveryPackages(Request $request) {
+
     }
 }
