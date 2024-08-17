@@ -11,7 +11,9 @@ class Container extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        "trucker_id"
+        "trucker_id",
+        "from_campus_id",
+        "to_campus_id"
     ];
 
     public function trucker() {

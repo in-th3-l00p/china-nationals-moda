@@ -50,6 +50,7 @@ Route::middleware("auth:sanctum")->group(function () {
                 "onlineToggle"
             ]);
 
+            // pickup
             Route::get("/v1/courier/package/pickup/pending", [
                 CourierController::class,
                 "getPendingPickup"
@@ -60,11 +61,39 @@ Route::middleware("auth:sanctum")->group(function () {
                 "carryPendingPickupPackages"
             ]);
 
+
+            // pack
+            Route::get("/v1/courier/package/pickedup/carried", [
+                CourierController::class,
+                "getPickedUpPackages"
+            ]);
+
+            Route::post("/v1/courier/package/pickedup/pack", [
+                CourierController::class,
+                "packPackages"
+            ]);
+
+            // delivery
             Route::get("/v1/courier/package/delivery/pending", [
                 CourierController::class,
                 "getPendingDelivery"
             ]);
-
+            Route::post("/v1/courier/package/delivery/carry", [
+                CourierController::class,
+                "carryPendingDeliveryPackages"
+            ]);
+            Route::get("/v1/courier/package/delivering/carried", [
+                CourierController::class,
+                "getDelivering"
+            ]);
+            Route::patch("/v1/courier/package/delivered/{package_id}", [
+                CourierController::class,
+                "delivered"
+            ]);
+            Route::get("/v1/courier/package/delivered", [
+                CourierController::class,
+                "getDelivered"
+            ]);
         });
     });
 });
