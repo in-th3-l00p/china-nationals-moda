@@ -95,6 +95,10 @@ Route::middleware("auth:sanctum")->group(function () {
                 "getDelivered"
             ]);
         });
+
+        Route::middleware("can:trucker")->group(function () {
+
+        });
     });
 });
 
